@@ -8,6 +8,18 @@ function MapSystem(canv_sel) {
     this.timer_tick = null;
     this.tps = 60;
 
+    this.renderer = new MapRenderer(this);
+    this.ticker = new MapTicker(this);
+
+    this.entities = [
+        new Player({
+            avatar: 'assets/testing/ava.jpg',
+            map: this,
+            health: 50,
+            name: 'Hat Kid'
+        })
+    ];
+
     this.init_canvas = function() {
         let self = this;
         this.canvas = document.querySelector(this._cs);
@@ -20,8 +32,8 @@ function MapSystem(canv_sel) {
         });
         this.resizeCanvas();
 
-        this.renderer = new MapRenderer(this);
-        this.ticker = new MapTicker(this);
+        this.renderer.init();
+        this.ticker.init();
 
         this.canvas.dataset.loaded = true;
     }

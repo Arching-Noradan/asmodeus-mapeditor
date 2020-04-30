@@ -16,12 +16,17 @@ function Player(opts) {
     this.health_max = opts.health_max || 100;
     this.health = opts.health || this.health_max;
     this.name = opts.name || 'Unknown';
-    this.renderer = opts.renderer;
-    this.ctx = this.renderer.context;
+    this.map = opts.map;
+    this.ctx = null;
+    this.renderer = null;
 
     this.render = function() {
         if(!this.avatar.ready)
             return;
+        if(!this.ctx) {
+            this.ctx = this.map.context;
+            this.renderer = this.map.renderer;
+        }
         let pos = this.renderer.camera.worldCoordToScreen({
             x: this.x, y: this.y
         });

@@ -1,10 +1,14 @@
-function Camera(canv) {
+function Camera(renderer) {
     this.x = 0;
     this.y = 0;
     this.end_x = 0;
     this.end_y = 0;
-    this.canvas = canv;
+    this.renderer = renderer;
     this.scale = 1;
+
+    this.init = function() {
+        this.canvas = this.renderer.canvas;
+    }
 
     this.worldCoordToScreen = function(wp) {
         let half_w = this.canvas.width / 2,
@@ -22,20 +26,23 @@ function Camera(canv) {
 
 function MapRenderer(map) {
     this.map = map;
-    this.context = this.map.context;
-    this.camera = new Camera(this.map.canvas);
-    this.bg = new ImageAsset('assets/background.png');
-    this.player = new Player({
-        avatar: 'assets/ava.jpg',
-        renderer: this,
-        health: 50,
-        name: 'Hat Kid'
-    });
+    this.canvas = null;
+    this.context = null;
+    this.camera = new Camera(this);
+    this.bg = new ImageAsset('assets/testing/background.png');
 
-    this.render = function(delta) {
+    this.init = function() {
+        this.canvas = this.map.canvas;
+        this.context = this.map.context;
+        this.camera.init();
+    }
+
+    this.render = function() {
         this.clear();
         this.drawViewPort();
-        this.player.render();
+        this.map.entities.forEach(function(entity) {
+            entity.render();
+        });
 
         this.context.beginPath();
         this.context.fillStyle = '#787878';
