@@ -1,0 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat&display=swap');
+
+.bottom-bar {
+    border-top: 1px solid #d8d8d8;
+    background-color: #ffffff;
+}
+
+#map-canvas {
+    background-image: repeating-linear-gradient(45deg, #ffffff, #ffffff 10px, #ececec 10px, #ececec 20px);
+    transition-property: all;
+    transition-duration: 1s;
+}
+
+#map-canvas[data-loaded=true] {
+    transition-property: none;
+    background-image: none;
+}
