@@ -21,8 +21,6 @@ function Player(opts) {
     this.renderer = null;
 
     this.render = function() {
-        if(!this.avatar.ready)
-            return;
         if(!this.ctx) {
             this.ctx = this.map.context;
             this.renderer = this.map.renderer;
@@ -40,7 +38,13 @@ function Player(opts) {
 
         // Avatar
         this.ctx.beginPath();
-        this.ctx.drawImage(this.avatar.image, pos.x, pos.y, width, height);
+        if(this.avatar.ready) {
+            this.ctx.drawImage(this.avatar.image, pos.x, pos.y, width, height);
+        } else {
+            this.ctx.fillStyle = '#ffffff';
+            this.ctx.ellipse(pos.x + width / 2, pos.y + height / 2, width / 2, height / 2, 0, 0, Math.PI * 2);
+            this.ctx.fill();
+        }
         this.ctx.closePath();
 
         // Avatar frame

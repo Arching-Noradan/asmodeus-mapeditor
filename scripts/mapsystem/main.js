@@ -2,12 +2,13 @@ function MapSystem(canv_sel) {
     this._cs = canv_sel;
     this.canvas = null;
     this.context = null;
-    this.last_frame = null;
-    this.last_tick = null;
-    this.timer_frame = null;
-    this.timer_tick = null;
+    this.lastFrame = null;
+    this.lastTick = null;
+    this.timerFrame = null;
+    this.timerTick = null;
     this.tps = 60;
 
+    this.eventHandler = new MapEventHandler(this);
     this.renderer = new MapRenderer(this);
     this.ticker = new MapTicker(this);
 
@@ -20,33 +21,33 @@ function MapSystem(canv_sel) {
         })
     ];
 
-    this.init_canvas = function() {
+    this.background = null;
+
+    this.setBackground = function(url) {
+        this.background = new ImageAsset(url);
+    }
+
+    this.initCanvas = function() {
         let self = this;
         this.canvas = document.querySelector(this._cs);
         this.context = this.canvas.getContext('2d');
-        window.addEventListener('resize', function(e) {
-            self.resizeCanvas(e);
-        });
-        window.addEventListener('keydown', function(e) {
-            self.onKeyDown(e);
-        });
-        this.resizeCanvas();
+        window.addEventListener('resize', function(e) { self.resizeCanvas(e); });
+        window.addEventListener('keydown', function(e) { self.eventHandler.onKeyDown(e); });
+        window.addEventListener('keyup', function(e) { self.eventHandler.onKeyUp(e); });
+        window.addEventListener('mousemove', function(e) { self.eventHandler.onMouseMove(e); });
 
+        this.resizeCanvas();
         this.renderer.init();
         this.ticker.init();
 
         this.canvas.dataset.loaded = true;
     }
 
-    this.start_timers = function() {
-        if(!this.timer_frame && !this.timer_tick) {
-            this.clk_frame();
-            this.clk_tick();
+    this.startTimers = function() {
+        if(!this.timerFrame && !this.timerTick) {
+            this.clockFrame();
+            this.clockTick();
         }
-    }
-
-    this.onKeyDown = function(e) {
-        this.ticker.onKeyDown(e);
     }
 
     this.resizeCanvas = function() {
@@ -64,29 +65,29 @@ function MapSystem(canv_sel) {
         this.ticker.tick(delta);
     }
 
-    this.clk_frame = function() {
+    this.clockFrame = function() {
         let delta, self = this;
-        if(this.last_frame)
-            delta = new Date().getTime() - this.last_frame;
+        if(this.lastFrame)
+            delta = new Date().getTime() - this.lastFrame;
         else
             delta = 0;
         this.frame(delta / 1000);
-        this.last_frame = new Date().getTime();
-        this.timer_frame = window.requestAnimationFrame(function() {
-            self.clk_frame();
+        this.lastFrame = new Date().getTime();
+        this.timerFrame = window.requestAnimationFrame(function() {
+            self.clockFrame();
         });
     }
 
-    this.clk_tick = function() {
+    this.clockTick = function() {
         let delta, self = this;
-        if(this.last_tick)
-            delta = new Date().getTime() - this.last_tick;
+        if(this.lastTick)
+            delta = new Date().getTime() - this.lastTick;
         else
             delta = 0;
         this.tick(delta / 1000);
-        this.last_tick = new Date().getTime();
-        this.timer_tick = window.setTimeout(function() {
-            self.clk_tick();
+        this.lastTick = new Date().getTime();
+        this.timerTick = window.setTimeout(function() {
+            self.clockTick();
         }, 1000 / this.tps);
     }
 }

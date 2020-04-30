@@ -11,11 +11,16 @@ function Camera(renderer) {
     }
 
     this.worldCoordToScreen = function(wp) {
-        let half_w = this.canvas.width / 2,
-            half_h = this.canvas.height / 2
         return {
             x: (wp.x - this.x) * this.scale,
             y: (wp.y - this.y) * this.scale,
+        }
+    }
+
+    this.screenCoordToWorld = function(sp) {
+        return {
+            x: (sp.x / this.scale) + this.x,
+            y: (sp.y / this.scale) + this.y,
         }
     }
 
@@ -29,7 +34,6 @@ function MapRenderer(map) {
     this.canvas = null;
     this.context = null;
     this.camera = new Camera(this);
-    this.bg = new ImageAsset('assets/testing/background.png');
 
     this.init = function() {
         this.canvas = this.map.canvas;
@@ -65,17 +69,17 @@ function MapRenderer(map) {
     }
 
     this.drawViewPort = function() {
-        if(!this.bg.ready)
+        if(!this.map.background || !this.map.background.ready)
             return false;
         let start = this.camera.worldCoordToScreen({x: 0, y: 0});
         let end = this.camera.worldCoordToScreen({
-            x: this.bg.image.width,
-            y: this.bg.image.height,
+            x: this.map.background.image.width,
+            y: this.map.background.image.height,
         });
         let width = end.x - start.x;
         let height = end.y - start.y;
         this.context.beginPath();
-        this.context.drawImage(this.bg.image, start.x, start.y, width, height);
+        this.context.drawImage(this.map.background.image, start.x, start.y, width, height);
         this.context.strokeStyle = 'black';
         this.context.strokeRect(start.x, start.y, width, height);
         this.context.closePath();
