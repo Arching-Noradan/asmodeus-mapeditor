@@ -11,15 +11,12 @@ function MapSystem(canv_sel) {
     this.eventHandler = new MapEventHandler(this);
     this.renderer = new MapRenderer(this);
     this.ticker = new MapTicker(this);
+    this.api = new EditorAPI({
+        'api_url': 'https://nevermind.some.host/api',
+        'token': localStorage.getItem('asmodeus-api-token'),
+    });
 
-    this.entities = [
-        new Player({
-            avatar: 'assets/testing/ava.jpg',
-            map: this,
-            health: 50,
-            name: 'Hat Kid'
-        })
-    ];
+    this.entities = {};
 
     this.background = null;
 

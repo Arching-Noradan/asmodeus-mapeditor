@@ -8,8 +8,8 @@ function MapTicker(map) {
 
     this.tick = function(delta) {
         this.map.renderer.camera.tick(delta);
-        this.map.entities.forEach(function(entity) {
-            entity.tick(delta);
-        })
+        for(let k in this.map.entities) {
+            this.map.entities[k].tick(delta);
+        }
     }
 }

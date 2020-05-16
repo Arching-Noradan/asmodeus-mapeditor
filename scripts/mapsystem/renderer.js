@@ -44,9 +44,9 @@ function MapRenderer(map) {
     this.render = function() {
         this.clear();
         this.drawViewPort();
-        this.map.entities.forEach(function(entity) {
-            entity.render();
-        });
+        for(let k in this.map.entities) {
+            this.map.entities[k].render();
+        }
 
         this.context.beginPath();
         this.context.fillStyle = '#787878';
