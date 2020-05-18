@@ -24,6 +24,14 @@ function Camera(renderer) {
         }
     }
 
+    this.zoomAround = function(pos, factor) {
+        let oldWorldMouse = this.screenCoordToWorld(pos);
+        this.scale *= (1 + factor);
+        let newWorldMouse = this.screenCoordToWorld(pos);
+        this.x += (oldWorldMouse.x - newWorldMouse.x);
+        this.y += (oldWorldMouse.y - newWorldMouse.y);
+    }
+
     this.tick = function(delta) {
 
     }
@@ -42,6 +50,8 @@ function MapRenderer(map) {
     }
 
     this.render = function() {
+        if(!this.map.renderRequired)
+            return;
         this.clear();
         this.drawViewPort();
         for(let k in this.map.entities) {

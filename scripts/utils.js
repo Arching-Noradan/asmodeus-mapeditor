@@ -9,7 +9,7 @@ window.hkc = new (function(w, d) {
     }
 })(window, document);
 
-window.ImageAsset = function ImageAsset(url, onReady) {
+window.ImageAsset = function ImageAsset(url, onReady, onProgress) {
     hkc.log('[AssetLoader:ImageAsset]', 'Preparing', url);
     this.image = new Image();
     this.ready = false;
@@ -17,6 +17,7 @@ window.ImageAsset = function ImageAsset(url, onReady) {
     this.loaded = null;
     this.imageSize = null;
     this.onReady = onReady || null;
+    this.onProgress = onProgress || null;
     this.xhr = new XMLHttpRequest();
 
     let self = this;
@@ -45,8 +46,10 @@ window.ImageAsset = function ImageAsset(url, onReady) {
             self.imageSize = e.total;
             self.loaded = e.loaded;
             self.progress = e.loaded / e.total;
+            let progress_int = Math.floor(self.progress * 100);
+            if(self.onProgress)
+                self.onProgress(self, e, progress_int);
         }
-        let progress_int = Math.floor(self.progress * 100);
     }
 
     this.xhr.onloadstart = function() {

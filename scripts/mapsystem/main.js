@@ -6,7 +6,8 @@ function MapSystem(canv_sel) {
     this.lastTick = null;
     this.timerFrame = null;
     this.timerTick = null;
-    this.tps = 60;
+    this.tps = 20;
+    this.renderRequired = true;
 
     this.eventHandler = new MapEventHandler(this);
     this.renderer = new MapRenderer(this);
@@ -17,11 +18,14 @@ function MapSystem(canv_sel) {
     });
 
     this.entities = {};
+    this.eventsLog = [];
 
     this.background = null;
 
     this.setBackground = function(url) {
-        this.background = new ImageAsset(url);
+        this.background = new ImageAsset(url, () => {
+            this.renderRequired = true;
+        });
     }
 
     this.initCanvas = function() {

@@ -6,21 +6,16 @@
     <link rel="stylesheet" href="styles/skeleton.css">
     <link rel="stylesheet" href="styles/appearance.css">
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
-    <script src="scripts/utils.js"></script>
-    <script src="scripts/api.js"></script>
-    <script src="scripts/mapsystem/player.js"></script>
-    <script src="scripts/mapsystem/eventhandler.js"></script>
-    <script src="scripts/mapsystem/renderer.js"></script>
-    <script src="scripts/mapsystem/ticker.js"></script>
-    <script src="scripts/mapsystem/main.js"></script>
-    <script src="scripts/main.js"></script>
+    <script src="scripts/lib/loader.js"></script>
 </head>
 <body>
     <div class="wrapper">
+        <pre class="logger"></pre>
         <div class="canvas-wrapper">
             <canvas id="map-canvas"></canvas>
         </div>
         <div class="bottom-bar"></div>
     </div>
+    <script src="init.js"></script>
 </body>
 </html>

@@ -21,6 +21,16 @@ body,
     height: 100%;
 }
 
+.logger {
+    width: 500px;
+    height: 500px;
+    position: fixed;
+    top: 0px;
+    left: 0px;
+    z-index: 10;
+    color: red;
+}
+
 .bottom-bar {
     width: 500px;
     height: 30px;

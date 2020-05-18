@@ -5,10 +5,7 @@ function MapEventHandler(map) {
     this.onMouseMove = function(ev) {
         this.mousePos.x = ev.x;
         this.mousePos.y = ev.y;
-        // let entity = this.map.entities[0];
         let pos = this.map.renderer.camera.screenCoordToWorld(this.mousePos);
-        // entity.x = pos.x;
-        // entity.y = pos.y;
     }
     this.onMouseDown = function(ev) {
 
