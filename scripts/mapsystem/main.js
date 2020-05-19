@@ -65,6 +65,7 @@ function MapSystem(canv_sel) {
             this.canvas.width = Math.floor(this.canvas.offsetWidth);
             this.canvas.height = Math.floor(this.canvas.offsetHeight);
         }
+        this.renderRequired = true;
     }
 
     this.frame = function(delta) {
