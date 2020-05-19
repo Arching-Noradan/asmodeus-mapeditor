@@ -43,6 +43,8 @@ function MapRenderer(map) {
     this.context = null;
     this.camera = new Camera(this);
 
+    this.assetLoaders = {};
+
     this.init = function() {
         this.canvas = this.map.canvas;
         this.context = this.map.context;
@@ -58,16 +60,19 @@ function MapRenderer(map) {
             this.map.entities[k].render();
         }
 
-        this.context.beginPath();
-        this.context.fillStyle = '#787878';
-        this.context.textBaseline = 'top';
-        this.context.textAlign = 'left';
-        this.context.font = '16px monospace';
-        let cameraInfo = this.camera.x + ':' + this.camera.y + ':' + this.camera.scale;
-        this.context.fillText(cameraInfo, 0, 0);
-        this.context.fillText(this.map.ticker.lastKeyName, 0, 20);
-        this.context.closePath();
+        // this.context.beginPath();
+        // this.context.fillStyle = '#787878';
+        // this.context.textBaseline = 'top';
+        // this.context.textAlign = 'left';
+        // this.context.font = '16px monospace';
+        // let cameraInfo = this.camera.x + ':' + this.camera.y + ':' + this.camera.scale;
+        // this.context.fillText(cameraInfo, 0, 0);
+        // this.context.fillText(this.map.debugString, 0, 20);
+        // this.context.closePath();
 
+        this.renderAssetLoaders();
+
+        this.map.renderRequired = false;
     }
 
     this.clear = function() {
@@ -79,19 +84,48 @@ function MapRenderer(map) {
     }
 
     this.drawViewPort = function() {
-        if(!this.map.background || !this.map.background.ready)
+        if(!this.map.assets.background || !this.map.assets.background.ready)
             return false;
         let start = this.camera.worldCoordToScreen({x: 0, y: 0});
         let end = this.camera.worldCoordToScreen({
-            x: this.map.background.image.width,
-            y: this.map.background.image.height,
+            x: this.map.assets.background.image.width,
+            y: this.map.assets.background.image.height,
         });
         let width = end.x - start.x;
         let height = end.y - start.y;
         this.context.beginPath();
-        this.context.drawImage(this.map.background.image, start.x, start.y, width, height);
+        this.context.drawImage(this.map.assets.background.image, start.x, start.y, width, height);
         this.context.strokeStyle = 'black';
         this.context.strokeRect(start.x, start.y, width, height);
         this.context.closePath();
     }
-} 
+
+    this.renderAssetLoaders = function() {
+        let y = 0;
+        for(let k in this.assetLoaders) {
+            let bar = this.assetLoaders[k];
+            bar.x = 0;
+            bar.y = y;
+            bar.render(this.context);
+            y += bar.h + 1;
+        }
+    }
+
+    this.updateAssetLoader = function() {
+        for(let k in this.map.assets) {
+            let asset = this.map.assets[k];
+            if(!asset || asset.ready)
+                delete this.assetLoaders[k];
+            else if(this.assetLoaders[k] != null)
+                this.assetLoaders[k].update(asset.loaded / 1024, asset.imageSize / 1024);
+            else
+                this.assetLoaders[k] = new UIProgressBar({
+                    x: 0, y: 0, w: 250, h: 20,
+                    format: k + ': %(done)dk/%(total)dk (%(percents)7.3f%%)',
+                    done: asset.loaded / 1024, total: asset.imageSize / 1024,
+                    font: '10px monospace'
+                });
+        }
+        this.map.renderRequired = true;
+    }
+}

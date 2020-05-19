@@ -18,13 +18,18 @@ function MapSystem(canv_sel) {
     });
 
     this.entities = {};
+    this.assets = {background: null};
     this.eventsLog = [];
-
-    this.background = null;
+    this.debugString = 'Lmao';
 
     this.setBackground = function(url) {
-        this.background = new ImageAsset(url, () => {
-            this.renderRequired = true;
+        this.assets.background = new ImageAsset(url, () => {
+            let rgb = this.assets.background.avgColor,
+                color = Sprintf.sprintf('rgb(%d, %d, %d)', rgb.r, rgb.g, rgb.b);
+            this.canvas.style.backgroundColor = color;
+            this.renderer.updateAssetLoader();
+        }, (s, e, p) => {
+            this.renderer.updateAssetLoader();
         });
     }
 
@@ -35,7 +40,11 @@ function MapSystem(canv_sel) {
         window.addEventListener('resize', function(e) { self.resizeCanvas(e); });
         window.addEventListener('keydown', function(e) { self.eventHandler.onKeyDown(e); });
         window.addEventListener('keyup', function(e) { self.eventHandler.onKeyUp(e); });
+        window.addEventListener('mousedown', function(e) { self.eventHandler.onMouseDown(e); });
         window.addEventListener('mousemove', function(e) { self.eventHandler.onMouseMove(e); });
+        window.addEventListener('mouseup', function(e) { self.eventHandler.onMouseUp(e); });
+        window.addEventListener('wheel', function(e) { self.eventHandler.onWheel(e); });
+        window.addEventListener('contextmenu', function(e) { self.eventHandler.onContextMenu(e); });
 
         this.resizeCanvas();
         this.renderer.init();
