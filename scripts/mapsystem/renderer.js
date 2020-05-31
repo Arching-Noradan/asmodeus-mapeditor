@@ -44,6 +44,8 @@ function MapRenderer(map) {
     this.camera = new Camera(this);
 
     this.assetLoaders = {};
+    this.contextMenu = null;
+    this.partialRefresh = {};
 
     this.init = function() {
         this.canvas = this.map.canvas;
@@ -51,26 +53,19 @@ function MapRenderer(map) {
         this.camera.init();
     }
 
-    this.render = function() {
-        if(!this.map.renderRequired)
-            return;
-        this.clear();
-        this.drawViewPort();
-        for(let k in this.map.entities) {
-            this.map.entities[k].render();
+    this.render = function(delta) {
+        if(this.map.renderRequired) {
+            this.clear();
+            this.drawViewPort();
+            for(let k in this.map.entities) {
+                this.map.entities[k].render();
+            }
+
+            this.renderAssetLoaders();
         }
 
-        // this.context.beginPath();
-        // this.context.fillStyle = '#787878';
-        // this.context.textBaseline = 'top';
-        // this.context.textAlign = 'left';
-        // this.context.font = '16px monospace';
-        // let cameraInfo = this.camera.x + ':' + this.camera.y + ':' + this.camera.scale;
-        // this.context.fillText(cameraInfo, 0, 0);
-        // this.context.fillText(this.map.debugString, 0, 20);
-        // this.context.closePath();
-
-        this.renderAssetLoaders();
+        if(this.contextMenu && (this.partialRefresh.contextMenu || this.map.renderRequired))
+            this.contextMenu.render(this.context, delta);
 
         this.map.renderRequired = false;
     }
